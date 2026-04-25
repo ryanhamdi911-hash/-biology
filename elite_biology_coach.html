@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elite Biology Coach</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --card: #14141e;
+    --card2: #1e1e2e;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0f0f8;
+    --muted: #8888aa;
+    --accent: #00e5a0;
+    --accent2: #7c6aff;
+    --accent3: #ff6b6b;
+    --accent4: #ffd166;
+    --accent5: #06d6a0;
+    --glow: rgba(0,229,160,0.15);
+    --glow2: rgba(124,106,255,0.15);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+  }
+  .nav-brand {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .nav-brand span { color: var(--accent2); }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .nav-tab {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--bg3); }
+  .nav-tab.active { color: var(--bg); background: var(--accent); font-weight: 600; }
+  .nav-timer {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    color: var(--accent4);
+    font-weight: 700;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  /* SECTIONS */
+  .section { display: none; padding: 2rem; max-width: 900px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    padding: 3rem 0 2rem;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--glow);
+    color: var(--accent);
+    border: 1px solid rgba(0,229,160,0.3);
+    padding: 6px 16px;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+  }
+  .hero h1 .hl { color: var(--accent); }
+  .hero h1 .hl2 { color: var(--accent2); }
+  .hero p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+  }
+  .stats-row {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.2rem;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border2); }
+  .card-accent {
+    border-left: 3px solid var(--accent);
+  }
+  .card-accent2 { border-left: 3px solid var(--accent2); }
+  .card-accent3 { border-left: 3px solid var(--accent3); }
+  .card-accent4 { border-left: 3px solid var(--accent4); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+  .card-title.purple { color: var(--accent2); }
+  .card-title.red { color: var(--accent3); }
+  .card-title.yellow { color: var(--accent4); }
+
+  h2.section-head {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  .section-sub {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.8rem;
+  }
+
+  /* PHASE BADGE */
+  .phase-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin-bottom: 1.2rem;
+  }
+  .phase-num {
+    width: 26px; height: 26px;
+    background: var(--accent);
+    color: var(--bg);
+    border-radius: 50%;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 0.8rem;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .phase-num.p2 { background: var(--accent2); }
+  .phase-num.p3 { background: var(--accent3); }
+  .phase-num.p4 { background: var(--accent4); color: #000; }
+  .phase-num.p5 { background: var(--accent5); }
+  .phase-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  /* DIAGNOSTIC */
+  .diag-q {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .diag-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+  .diag-q p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text);
+    font-style: italic;
+  }
+  textarea.diag-input {
+    width: 100%;
+    margin-top: 0.8rem;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 70px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea.diag-input:focus { border-color: var(--accent); }
+
+  /* PARETO TABLE */
+  .pareto-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .pareto-table th {
+    text-align: left;
+    padding: 8px 12px;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    border-bottom: 1px solid var(--border);
+  }
+  .pareto-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .pareto-table tr:last-child td { border-bottom: none; }
+  .pareto-table tr:hover td { background: var(--bg3); }
+  .tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: var(--glow);
+    color: var(--accent);
+    border: 1px solid rgba(0,229,160,0.2);
+  }
+  .tag.p { background: var(--glow2); color: var(--accent2); border-color: rgba(124,106,255,0.2); }
+
+  /* SPRINT TIMER */
+  .timer-ring {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+  }
+  .timer-circle {
+    position: relative;
+    width: 160px; height: 160px;
+  }
+  .timer-circle svg { transform: rotate(-90deg); }
+  .timer-circle .timer-bg { fill: none; stroke: var(--bg3); stroke-width: 8; }
+  .timer-circle .timer-fg { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear; }
+  .timer-display {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .timer-time {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1;
+  }
+  .timer-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+  .timer-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  .btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: var(--bg); border-color: transparent; font-weight: 600; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-ghost { background: transparent; color: var(--text); }
+  .btn-ghost:hover { background: var(--bg3); }
+
+  /* SPRINT BLOCKS */
+  .sprint-blocks { display: flex; flex-direction: column; gap: 10px; }
+  .sprint-block {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sprint-block:hover { border-color: var(--border2); }
+  .sprint-block.active { border-color: var(--accent); background: rgba(0,229,160,0.05); }
+  .sprint-block.done { opacity: 0.5; }
+  .sprint-time { font-size: 0.75rem; color: var(--muted); min-width: 80px; font-family: 'Syne', sans-serif; }
+  .sprint-phase-name { font-size: 0.88rem; font-weight: 500; }
+  .sprint-phase-desc { font-size: 0.78rem; color: var(--muted); }
+  .sprint-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--border2);
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .sprint-block.active .sprint-dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .sprint-block.done .sprint-dot { background: var(--accent); opacity: 0.4; }
+
+  /* QUESTIONS */
+  .q-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  .q-tier {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+  }
+  .q-tier.t1 { color: var(--accent); }
+  .q-tier.t2 { color: var(--accent2); }
+  .q-tier.t3 { color: var(--accent3); }
+  .q-text { font-size: 0.92rem; line-height: 1.6; margin-bottom: 0.8rem; }
+  .q-marks { font-size: 0.75rem; color: var(--muted); }
+  .reveal-btn {
+    margin-top: 0.8rem;
+    padding: 6px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 7px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .reveal-btn:hover { color: var(--text); border-color: var(--accent); }
+  .hint-box {
+    display: none;
+    margin-top: 0.8rem;
+    background: var(--glow);
+    border: 1px solid rgba(0,229,160,0.15);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .hint-box.show { display: block; }
+
+  /* EXAM FRAMEWORK */
+  .framework-box {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 1.2rem;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    font-family: 'Syne', sans-serif;
+    margin-bottom: 1rem;
+  }
+  .fw-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 8px;
+    align-items: flex-start;
+  }
+  .fw-num {
+    width: 22px; height: 22px;
+    background: var(--accent2);
+    color: #fff;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .fw-text { font-family: 'DM Sans', sans-serif; font-size: 0.88rem; line-height: 1.5; }
+  .fw-text strong { color: var(--accent); font-weight: 600; }
+
+  /* FLASHCARDS */
+  .flashcard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .flashcard {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-height: 130px;
+    position: relative;
+    overflow: hidden;
+  }
+  .flashcard:hover { border-color: var(--accent2); }
+  .flashcard .fc-front, .flashcard .fc-back {
+    transition: opacity 0.3s;
+  }
+  .flashcard .fc-back { display: none; }
+  .flashcard.flipped .fc-front { display: none; }
+  .flashcard.flipped .fc-back { display: block; }
+  .flashcard.flipped { border-color: var(--accent); background: rgba(0,229,160,0.04); }
+  .fc-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--accent2);
+  }
+  .flashcard.flipped .fc-label { color: var(--accent); }
+  .fc-text { font-size: 0.88rem; line-height: 1.6; }
+  .fc-tap { font-size: 0.7rem; color: var(--muted); position: absolute; bottom: 10px; right: 12px; }
+
+  /* SCHEDULE */
+  .schedule-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .schedule-row:last-child { border-bottom: none; }
+  .sched-day {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--accent);
+    min-width: 70px;
+  }
+  .sched-action { font-size: 0.88rem; color: var(--text); }
+  .sched-time { font-size: 0.78rem; color: var(--muted); margin-left: auto; }
+
+  /* NOTES */
+  .pillar {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .pillar:last-child { border-bottom: none; }
+  .pillar-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+  }
+  .pillar-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
+  .pillar-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* REAL WORLD */
+  .rw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .rw-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+  }
+  .rw-concept { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--accent2); margin-bottom: 4px; }
+  .rw-app { font-size: 0.88rem; margin-bottom: 4px; }
+  .rw-career { font-size: 0.78rem; color: var(--muted); }
+  .connect-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .connect-chip {
+    padding: 6px 12px;
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 99px;
+    font-size: 0.8rem;
+    color: var(--text);
+  }
+  .connect-chip span { color: var(--accent2); }
+
+  /* MASTERY CHECK */
+  .mastery-list { list-style: none; }
+  .mastery-list li {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+  }
+  .mastery-list li:last-child { border-bottom: none; }
+  .check { color: var(--accent); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+  /* PROGRESS BAR */
+  .progress-wrap { margin-bottom: 1rem; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; }
+  .progress-bar {
+    height: 4px;
+    background: var(--bg3);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 0.6s ease;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .nav-tabs { gap: 2px; }
+    .nav-tab { padding: 5px 8px; font-size: 0.7rem; }
+    .section { padding: 1rem; }
+    .hero h1 { font-size: 1.8rem; }
+    .stats-row { gap: 1rem; }
+    .pareto-table { font-size: 0.8rem; }
+    .flashcard-grid { grid-template-columns: 1fr; }
+    .rw-grid { grid-template-columns: 1fr; }
+  }
+
+  /* PULSE ANIMATION */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  .pulse { animation: pulse 2s infinite; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">ELITE<span>BIO</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('home')">Overview</button>
+    <button class="nav-tab" onclick="showSection('phase1')">Diagnose</button>
+    <button class="nav-tab" onclick="showSection('phase2')">Sprint</button>
+    <button class="nav-tab" onclick="showSection('phase3')">Test Me</button>
+    <button class="nav-tab" onclick="showSection('phase4')">Memory</button>
+    <button class="nav-tab" onclick="showSection('phase5')">Real World</button>
+  </div>
+  <div class="nav-timer" id="nav-clock">45:00</div>
+</nav>
+
+<!-- HOME -->
+<section class="section active" id="home">
+  <div class="hero">
+    <div class="hero-badge">Top 1% Student Protocol</div>
+    <h1>Master <span class="hl">Biology</span><br>Like an <span class="hl2">Expert</span></h1>
+    <p>A 45-minute elite protocol engineered for top grades. Five phases. Zero fluff. Built for students who refuse to be average.</p>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">5</div><div class="stat-label">Phases</div></div>
+      <div class="stat"><div class="stat-num">45</div><div class="stat-label">Minutes</div></div>
+      <div class="stat"><div class="stat-num">6</div><div class="stat-label">Core Pillars</div></div>
+      <div class="stat"><div class="stat-num">80%</div><div class="stat-label">Pareto Focus</div></div>
+    </div>
+    <button class="btn btn-primary" onclick="startSession()" style="font-size:1rem;padding:12px 32px;border-radius:12px;">Start 45-Min Session</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:2rem;">
+    <div class="card card-accent" onclick="showSection('phase1')" style="cursor:pointer;">
+      <div class="card-title">Phase 1</div>
+      <div style="font-size:1rem;font-weight:600;margin-bottom:4px;">Strategic Clarity</div>
+      <div style="font-size:0.82rem;color:var(--muted);">3 sharp diagnostic questions + Pareto 20% focus + mastery definition</div>
+    </div>
+    <div class="card card-accent2" onclick="showSection('phase2')" style="cursor:pointer;">
+      <div class="card-title purple">Phase 2</div>
+      <div style="font-size:1rem;font-weight:600;margin-bottom:4px;">Deep Work Sprint</div>
+      <div style="font-size:0.82rem;color:var(--muted);">Timed 45-min structure + concept breakdown + learning methodology</div>
+    </div>
+    <div class="card card-accent3" onclick="showSection('phase3')" style="cursor:pointer;">
+      <div class="card-title red">Phase 3</div>
+      <div style="font-size:1rem;font-weight:600;margin-bottom:4px;">Cognitive Stress Test</div>
+      <div style="font-size:0.82rem;color:var(--muted);">Exam-style questions across 3 tiers + exam pressure techniques</div>
+    </div>
+    <div class="card card-accent4" onclick="showSection('phase4')" style="cursor:pointer;">
+      <div class="card-title yellow">Phase 4</div>
+      <div style="font-size:1rem;font-weight:600;margin-bottom:4px;">Memory Encoding</div>
+      <div style="font-size:0.82rem;color:var(--muted);">Flashcards + 2-min notes + spaced repetition schedule</div>
+    </div>
+    <div class="card" style="cursor:pointer;" onclick="showSection('phase5')">
+      <div class="card-title" style="color:var(--accent5);">Phase 5</div>
+      <div style="font-size:1rem;font-weight:600;margin-bottom:4px;">Real-World Integration</div>
+      <div style="font-size:0.82rem;color:var(--muted);">Career links + cross-subject connections + mastery checklist</div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE 1 -->
+<section class="section" id="phase1">
+  <div class="phase-badge"><div class="phase-num">1</div><div class="phase-label">Strategic Clarity — Diagnose Your Gaps</div></div>
+  <h2 class="section-head">3 Sharp Diagnostic Questions</h2>
+  <p class="section-sub">Answer without Google. Be brutally honest. This identifies exactly where to focus.</p>
+
+  <div class="diag-q">
+    <div class="diag-num">Question 01 — Conceptual Depth</div>
+    <p>"Explain why a cell undergoing apoptosis doesn't trigger an inflammatory response, but a cell that's physically damaged does."</p>
+    <textarea class="diag-input" placeholder="Write your answer here... (tests mechanism understanding vs. vocabulary)"></textarea>
+  </div>
+
+  <div class="diag-q">
+    <div class="diag-num">Question 02 — Application Under Pressure</div>
+    <p>"A student says: 'Enzymes are used up in reactions, so you need to keep adding more.' Identify the misconception and correct it using first principles."</p>
+    <textarea class="diag-input" placeholder="Write your answer here... (tests biological reasoning speed)"></textarea>
+  </div>
+
+  <div class="diag-q">
+    <div class="diag-num">Question 03 — Cross-Topic Integration</div>
+    <p>"How does the structure of DNA directly explain why mutations in non-coding regions are usually harmless — but not always?"</p>
+    <textarea class="diag-input" placeholder="Write your answer here... (tests whether knowledge is connected or siloed)"></textarea>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-title">The 20% That Gives 80% of Results</div>
+    <table class="pareto-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Core Concept</th>
+          <th>Why High-Leverage</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">01</td>
+          <td style="font-weight:500;">Cell Structure → Function Logic</td>
+          <td style="color:var(--muted);font-size:0.82rem;">Every organ system question traces back here</td>
+          <td><span class="tag">Foundation</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">02</td>
+          <td style="font-weight:500;">Enzyme Kinetics & Inhibition</td>
+          <td style="color:var(--muted);font-size:0.82rem;">Appears in metabolism, drugs, digestion, genetics</td>
+          <td><span class="tag p">Bridge</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">03</td>
+          <td style="font-weight:500;">DNA → RNA → Protein (Central Dogma)</td>
+          <td style="color:var(--muted);font-size:0.82rem;">Foundation of genetics, cancer, evolution</td>
+          <td><span class="tag">Foundation</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">04</td>
+          <td style="font-weight:500;">Homeostasis & Negative Feedback</td>
+          <td style="color:var(--muted);font-size:0.82rem;">Hormones, nerves, kidneys, temperature</td>
+          <td><span class="tag p">Bridge</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">05</td>
+          <td style="font-weight:500;">Natural Selection Mechanics</td>
+          <td style="color:var(--muted);font-size:0.82rem;">Evolution, antibiotic resistance, adaptation</td>
+          <td><span class="tag">Foundation</span></td>
+        </tr>
+        <tr>
+          <td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">06</td>
+          <td style="font-weight:500;">Energy Flow: ATP, Respiration, Photosynthesis</td>
+          <td style="color:var(--muted);font-size:0.82rem;">Links metabolism, ecology, and cellular biology</td>
+          <td><span class="tag p">Bridge</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-accent2" style="margin-top:1rem;">
+    <div class="card-title purple">What Mastery Looks Like For You</div>
+    <ul class="mastery-list">
+      <li><span class="check">✓</span>Read an unseen scenario and immediately identify which biological principle applies</li>
+      <li><span class="check">✓</span>Explain <em>why</em> under time pressure — not just <em>what</em></li>
+      <li><span class="check">✓</span>Pick up 1–2 extra marks per question using the mechanism → consequence → example structure</li>
+      <li><span class="check">✓</span>Stay calm in exams because understanding is structural, not memory-dependent</li>
+      <li><span class="check">✓</span>Never confuse correlation with mechanism (e.g. "bacteria adapt" vs. "allele frequency shifts")</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center;margin-top:1.5rem;">
+    <button class="btn btn-primary" onclick="showSection('phase2')">Start Deep Work Sprint →</button>
+  </div>
+</section>
+
+<!-- PHASE 2 -->
+<section class="section" id="phase2">
+  <div class="phase-badge"><div class="phase-num p2">2</div><div class="phase-label">Deep Work Sprint — 45 Minutes</div></div>
+  <h2 class="section-head">Your Distraction-Free Study Plan</h2>
+  <p class="section-sub">Follow this structure exactly. Each block is engineered for maximum retention.</p>
+
+  <div class="timer-ring">
+    <div class="timer-circle">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="timer-bg" cx="80" cy="80" r="70"/>
+        <circle class="timer-fg" id="timer-ring" cx="80" cy="80" r="70"/>
+      </svg>
+      <div class="timer-display">
+        <div class="timer-time" id="timer-display">45:00</div>
+        <div class="timer-label" id="timer-phase-label">Ready</div>
+      </div>
+    </div>
+  </div>
+  <div class="timer-controls">
+    <button class="btn btn-primary" id="start-btn" onclick="toggleTimer()">Start Timer</button>
+    <button class="btn btn-ghost" onclick="resetTimer()">Reset</button>
+  </div>
+
+  <div class="sprint-blocks">
+    <div class="sprint-block active" id="block-0">
+      <div class="sprint-dot"></div>
+      <div class="sprint-time">00:00 – 05:00</div>
+      <div>
+        <div class="sprint-phase-name">Prime</div>
+        <div class="sprint-phase-desc">Answer the 3 diagnostic questions. No Google. No notes.</div>
+      </div>
+    </div>
+    <div class="sprint-block" id="block-1">
+      <div class="sprint-dot"></div>
+      <div class="sprint-time">05:00 – 20:00</div>
+      <div>
+        <div class="sprint-phase-name">Concept Core</div>
+        <div class="sprint-phase-desc">Master your weakest pillar using the 4-step method below.</div>
+      </div>
+    </div>
+    <div class="sprint-block" id="block-2">
+      <div class="sprint-dot"></div>
+      <div class="sprint-time">20:00 – 35:00</div>
+      <div>
+        <div class="sprint-phase-name">Stress Test</div>
+        <div class="sprint-phase-desc">Exam-style questions — Phase 3 of this app. No hints allowed.</div>
+      </div>
+    </div>
+    <div class="sprint-block" id="block-3">
+      <div class="sprint-dot"></div>
+      <div class="sprint-time">35:00 – 43:00</div>
+      <div>
+        <div class="sprint-phase-name">Encode</div>
+        <div class="sprint-phase-desc">Build your flashcards and short notes — Phase 4.</div>
+      </div>
+    </div>
+    <div class="sprint-block" id="block-4">
+      <div class="sprint-dot"></div>
+      <div class="sprint-time">43:00 – 45:00</div>
+      <div>
+        <div class="sprint-phase-name">Reflect</div>
+        <div class="sprint-phase-desc">Write 3 things: learned / still fuzzy / next action.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;">
+    <div class="card-title">The 4-Step Learning Method</div>
+    <div class="fw-step"><div class="fw-num">1</div><div class="fw-text"><strong>Simple version first</strong> — explain it as if to a 10-year-old. If you can't, you don't actually know it.</div></div>
+    <div class="fw-step"><div class="fw-num">2</div><div class="fw-text"><strong>Mechanism layer</strong> — what actually happens step-by-step at the molecular/cellular level?</div></div>
+    <div class="fw-step"><div class="fw-num">3</div><div class="fw-text"><strong>"So what?" layer</strong> — what breaks if this fails? What exam questions does this generate?</div></div>
+    <div class="fw-step"><div class="fw-num">4</div><div class="fw-text"><strong>Link it</strong> — which other topic connects here? Draw the bridge.</div></div>
+  </div>
+
+  <div class="card card-accent4" style="margin-top:1rem;">
+    <div class="card-title yellow">Environment Setup (Do This NOW)</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;font-size:0.88rem;">
+      <div style="display:flex;gap:8px;align-items:center;">📵 <span>Phone in another room or airplane mode</span></div>
+      <div style="display:flex;gap:8px;align-items:center;">🎧 <span>Binaural beats or white noise, no lyrics</span></div>
+      <div style="display:flex;gap:8px;align-items:center;">📋 <span>One notebook, one pen — nothing else open</span></div>
+      <div style="display:flex;gap:8px;align-items:center;">💧 <span>Water bottle on the desk</span></div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:1.5rem;">
+    <button class="btn btn-primary" onclick="showSection('phase3')">Enter Stress Test →</button>
+  </div>
+</section>
+
+<!-- PHASE 3 -->
+<section class="section" id="phase3">
+  <div class="phase-badge"><div class="phase-num p3">3</div><div class="phase-label">Active Recall & Cognitive Stress</div></div>
+  <h2 class="section-head">Exam-Level Questions</h2>
+  <p class="section-sub">Three tiers, escalating difficulty. Write full answers — no bullet-pointing your way through.</p>
+
+  <div class="card card-accent" style="margin-bottom:1.5rem;">
+    <div class="card-title">The 90-Second Rule — Use This Before Every Answer</div>
+    <div class="framework-box">
+      <div class="fw-step"><div class="fw-num">1</div><div class="fw-text"><strong>What concept is this actually testing?</strong> Name it out loud.</div></div>
+      <div class="fw-step"><div class="fw-num">2</div><div class="fw-text"><strong>What's the mechanism?</strong> Think: cause → process → effect</div></div>
+      <div class="fw-step"><div class="fw-num">3</div><div class="fw-text"><strong>What's the "so what"?</strong> Consequence or real application</div></div>
+    </div>
+    <div style="font-size:0.82rem;color:var(--muted);">Then write. Named structure/molecule → action → consequence = marks.</div>
+  </div>
+
+  <div style="margin-bottom:0.8rem;font-size:0.82rem;color:var(--muted);">Tap "Show Hint" only after writing a full attempt.</div>
+
+  <!-- T1 -->
+  <div class="q-card">
+    <div class="q-tier t1">Tier 1 — Mechanism</div>
+    <div class="q-text">A drug blocks competitive inhibitors at enzyme active sites. Predict what happens to reaction rate if substrate concentration is tripled. Explain the mechanism fully.</div>
+    <div class="q-marks">Aim for 4 mark-worthy points</div>
+    <textarea class="diag-input" placeholder="Your answer..."></textarea>
+    <button class="reveal-btn" onclick="toggleHint('h1')">Show Hint</button>
+    <div class="hint-box" id="h1">Key points: competitive inhibitor competes for active site → blocked by drug → active site now fully available → tripling substrate = more enzyme-substrate complexes forming per unit time → reaction rate increases significantly. Use: "probability of active site occupancy", "enzyme-substrate complex formation rate."</div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-tier t1">Tier 1 — Mechanism</div>
+    <div class="q-text">Explain how a single base substitution mutation can have zero effect on the protein produced. Under what conditions would the same mutation type be lethal?</div>
+    <div class="q-marks">Aim for 5 mark-worthy points</div>
+    <textarea class="diag-input" placeholder="Your answer..."></textarea>
+    <button class="reveal-btn" onclick="toggleHint('h2')">Show Hint</button>
+    <div class="hint-box" id="h2">Silent mutation → degenerate genetic code (multiple codons = same amino acid) → no amino acid change → protein tertiary structure unchanged → function preserved. Lethal if: active site residue changes → enzyme non-functional, OR stop codon introduced → truncated non-functional protein, OR mutation in regulatory region.</div>
+  </div>
+
+  <!-- T2 -->
+  <div class="q-card">
+    <div class="q-tier t2">Tier 2 — Exam Pressure (6 marks)</div>
+    <div class="q-text">Describe and explain how the body responds to a sudden drop in blood glucose concentration. Include the roles of specific hormones and organs. (6 marks)</div>
+    <div class="q-marks">6 marks — requires named structures and hormones</div>
+    <textarea class="diag-input" placeholder="Your answer..." style="min-height:120px;"></textarea>
+    <button class="reveal-btn" onclick="toggleHint('h3')">Show Hint</button>
+    <div class="hint-box" id="h3">Low blood glucose detected by α-cells in islets of Langerhans (pancreas) → glucagon secreted into blood → liver cells (hepatocytes) stimulated → glycogenolysis (glycogen → glucose) + gluconeogenesis → glucose released into blood → blood glucose rises → glucagon secretion reduces (negative feedback). Also: adrenaline (adrenal medulla) → same liver response + inhibits insulin release.</div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-tier t2">Tier 2 — Exam Pressure (5 marks)</div>
+    <div class="q-text">A species of bacteria exposed to an antibiotic: after 20 generations, 95% of the population survives. Using natural selection, explain this outcome. <em style="color:var(--accent3);">Warning: Do NOT say bacteria "adapted" or "became resistant."</em></div>
+    <div class="q-marks">5 marks — mechanism only, no Lamarckian language</div>
+    <textarea class="diag-input" placeholder="Your answer..."></textarea>
+    <button class="reveal-btn" onclick="toggleHint('h4')">Show Hint</button>
+    <div class="hint-box" id="h4">Random mutations in original population → some individuals had alleles conferring resistance by chance → antibiotic = selection pressure → non-resistant individuals die / fail to reproduce → resistant individuals survive and reproduce → pass resistance alleles to offspring → frequency of resistance alleles increases in population over generations → after 20 generations, 95% carry resistance alleles.</div>
+  </div>
+
+  <!-- T3 -->
+  <div class="q-card">
+    <div class="q-tier t3">Tier 3 — Stretch & Integrate</div>
+    <div class="q-text">A patient has a mutation preventing mRNA from being released from the nucleus. Predict THREE downstream consequences at the cellular and organism level. Justify each.</div>
+    <div class="q-marks">High difficulty — requires multi-system thinking</div>
+    <textarea class="diag-input" placeholder="Your answer..." style="min-height:120px;"></textarea>
+    <button class="reveal-btn" onclick="toggleHint('h5')">Show Hint</button>
+    <div class="hint-box" id="h5">1. No protein synthesis → ribosomes in cytoplasm have no template → no polypeptides produced → loss of all cellular functions requiring proteins. 2. Enzyme deficiency → metabolic pathways fail → accumulation of substrates / absence of products → cell death or dysfunction. 3. Organism level: severe developmental failure → if embryonic, lethal; if somatic, organ-specific dysfunction (e.g. liver fails to produce clotting factors → uncontrolled bleeding). Bonus: immune system collapse, hormone deficiency, structural protein absence.</div>
+  </div>
+
+  <div class="q-card">
+    <div class="q-tier t3">Tier 3 — First Principles</div>
+    <div class="q-text">Why can't humans digest cellulose but can digest starch, even though both are made entirely of glucose? What does this reveal about the relationship between molecular structure and biological function?</div>
+    <div class="q-marks">Conceptual mastery question</div>
+    <textarea class="diag-input" placeholder="Your answer..."></textarea>
+    <button class="reveal-btn" onclick="toggleHint('h6')">Show Hint</button>
+    <div class="hint-box" id="h6">Starch: α-1,4-glycosidic bonds → coiled/helical structure → amylase active site complementary to this shape → hydrolysis possible. Cellulose: β-1,4-glycosidic bonds → straight chains, hydrogen bonding between chains → rigid structural molecule → human amylase active site NOT complementary → cannot bind → no digestion. Principle: enzyme specificity (lock-and-key) = tertiary structure of active site determines function. Isomers with same atoms but different bond angles = completely different biological behaviour.</div>
+  </div>
+
+  <div style="text-align:center;margin-top:1.5rem;">
+    <button class="btn btn-primary" onclick="showSection('phase4')">Encode Your Memory →</button>
+  </div>
+</section>
+
+<!-- PHASE 4 -->
+<section class="section" id="phase4">
+  <div class="phase-badge"><div class="phase-num p4">4</div><div class="phase-label">Memory Encoding</div></div>
+  <h2 class="section-head">Lock It In Forever</h2>
+  <p class="section-sub">Tap any flashcard to reveal the answer. Review these before every exam.</p>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <div class="card-title yellow">2-Minute Bulletproof Notes — The 6 Pillars</div>
+    <div style="margin-top:0.5rem;">
+      <div class="pillar">
+        <div class="pillar-icon" style="background:rgba(0,229,160,0.1);color:var(--accent);">C</div>
+        <div><div class="pillar-name">Cell → Function</div><div class="pillar-desc">Structure dictates role. Always ask why a cell is shaped/equipped that way. Form follows function — always.</div></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon" style="background:rgba(124,106,255,0.1);color:var(--accent2);">E</div>
+        <div><div class="pillar-name">Enzymes</div><div class="pillar-desc">Specific, reusable, affected by temp/pH/inhibitors. Active site = lock, substrate = key. Denatured ≠ deactivated — shape is permanently lost.</div></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon" style="background:rgba(255,107,107,0.1);color:var(--accent3);">D</div>
+        <div><div class="pillar-name">Central Dogma</div><div class="pillar-desc">DNA → (transcription) → mRNA → (translation) → Protein. Mutations here cascade. Understand at which step each disease strikes.</div></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon" style="background:rgba(255,209,102,0.1);color:var(--accent4);">H</div>
+        <div><div class="pillar-name">Homeostasis</div><div class="pillar-desc">Negative feedback: Receptor → Coordination Centre → Effector. Always self-correcting. Know the specific pathway for blood glucose, temperature, and CO₂ levels.</div></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon" style="background:rgba(6,214,160,0.1);color:var(--accent5);">N</div>
+        <div><div class="pillar-name">Natural Selection</div><div class="pillar-desc">Variation → Pressure → Differential survival/reproduction → Allele frequency shift. Organisms never "choose" to adapt. Never use Lamarckian language.</div></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-icon" style="background:rgba(0,229,160,0.1);color:var(--accent);">A</div>
+        <div><div class="pillar-name">Energy & ATP</div><div class="pillar-desc">ATP is the universal energy currency. Respiration (all cells) ≠ breathing. Photosynthesis stores energy; respiration releases it. Both are cellular processes.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:0.8rem;font-size:0.82rem;color:var(--muted);">Tap a card to flip it — front is the question, back is the answer.</div>
+  <div class="flashcard-grid">
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="fc-front">
+        <div class="fc-label">Question</div>
+        <div class="fc-text">What is the difference between competitive and non-competitive enzyme inhibition?</div>
+        <div class="fc-tap">tap to reveal</div>
+      </div>
+      <div class="fc-back">
+        <div class="fc-label">Answer</div>
+        <div class="fc-text"><strong>Competitive:</strong> blocks active site, reversible with more substrate. <strong>Non-competitive:</strong> binds allosteric site → changes enzyme shape → cannot be outcompeted by substrate.</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="fc-front">
+        <div class="fc-label">Question</div>
+        <div class="fc-text">Why does temperature beyond the optimum decrease enzyme activity permanently?</div>
+        <div class="fc-tap">tap to reveal</div>
+      </div>
+      <div class="fc-back">
+        <div class="fc-label">Answer</div>
+        <div class="fc-text">Heat breaks hydrogen bonds holding tertiary structure → active site shape changes → substrate can no longer bind → enzyme denatured (permanent, not temporary).</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="fc-front">
+        <div class="fc-label">Question</div>
+        <div class="fc-text">What is the role of mRNA in protein synthesis?</div>
+        <div class="fc-tap">tap to reveal</div>
+      </div>
+      <div class="fc-back">
+        <div class="fc-label">Answer</div>
+        <div class="fc-text">Carries genetic code from nucleus DNA to ribosome in cytoplasm. Sequence of codons (triplets) determines amino acid sequence during translation.</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="fc-front">
+        <div class="fc-label">Question</div>
+        <div class="fc-text">How does natural selection change allele frequency in a population?</div>
+        <div class="fc-tap">tap to reveal</div>
+      </div>
+      <div class="fc-back">
+        <div class="fc-label">Answer</div>
+        <div class="fc-text">Individuals with favourable alleles survive longer → reproduce more → pass those alleles to offspring → frequency of favourable alleles increases over generations.</div>
+      </div>
+    </div>
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="fc-front">
+        <div class="fc-label">Question</div>
+        <div class="fc-text">What triggers insulin secretion and what is its precise effect?</div>
+        <div class="fc-tap">tap to reveal</div>
+      </div>
+      <div class="fc-back">
+        <div class="fc-label">Answer</div>
+        <div class="fc-text">High blood glucose detected by β-cells in islets of Langerhans → insulin released → liver and muscle cells increase glucose uptake and glycogenesis → blood glucose falls → negative feedback stops insulin release.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-accent2" style="margin-top:1.5rem;">
+    <div class="card-title purple">Spaced Repetition Schedule</div>
+    <div class="schedule-row"><div class="sched-day">Today</div><div class="sched-action">Full 45-min session — this protocol</div><div class="sched-time">45 min</div></div>
+    <div class="schedule-row"><div class="sched-day">Day 1</div><div class="sched-action">Review Phase 4 notes and flashcards only</div><div class="sched-time">10 min</div></div>
+    <div class="schedule-row"><div class="sched-day">Day 4</div><div class="sched-action">Redo Tier 2 exam questions — no notes</div><div class="sched-time">20 min</div></div>
+    <div class="schedule-row"><div class="sched-day">Day 7</div><div class="sched-action">Full flashcard review + 1 new past paper question</div><div class="sched-time">25 min</div></div>
+    <div class="schedule-row"><div class="sched-day">Day 14</div><div class="sched-action">Timed past paper section — exam conditions</div><div class="sched-time">25 min</div></div>
+    <div class="schedule-row"><div class="sched-day">Day 30</div><div class="sched-action">Full mock paper + identify remaining gaps</div><div class="sched-time">60 min</div></div>
+  </div>
+
+  <div style="text-align:center;margin-top:1.5rem;">
+    <button class="btn btn-primary" onclick="showSection('phase5')">See Real-World Integration →</button>
+  </div>
+</section>
+
+<!-- PHASE 5 -->
+<section class="section" id="phase5">
+  <div class="phase-badge"><div class="phase-num p5">5</div><div class="phase-label">Real-World Integration</div></div>
+  <h2 class="section-head">Where Biology Lives in the Real World</h2>
+  <p class="section-sub">Understanding the application cements conceptual memory. This is what separates top students.</p>
+
+  <div class="rw-grid">
+    <div class="rw-card">
+      <div class="rw-concept">Enzyme Kinetics</div>
+      <div class="rw-app">Statins block cholesterol-producing enzymes. Drug dosage = inhibitor concentration problem.</div>
+      <div class="rw-career">Pharmacology · Biochemistry</div>
+    </div>
+    <div class="rw-card">
+      <div class="rw-concept">Central Dogma</div>
+      <div class="rw-app">CRISPR-Cas9 edits DNA sequences. mRNA vaccines (COVID-19) bypass DNA entirely.</div>
+      <div class="rw-career">Genetic Engineering · Oncology</div>
+    </div>
+    <div class="rw-card">
+      <div class="rw-concept">Homeostasis</div>
+      <div class="rw-app">Type 1 diabetes = β-cell destruction → no insulin feedback. Insulin pumps simulate the loop.</div>
+      <div class="rw-career">Medicine · Endocrinology</div>
+    </div>
+    <div class="rw-card">
+      <div class="rw-concept">Natural Selection</div>
+      <div class="rw-app">Antibiotic resistance is the fastest-evolving crisis in global health. MRSA = natural selection in action.</div>
+      <div class="rw-career">Epidemiology · Public Health</div>
+    </div>
+    <div class="rw-card">
+      <div class="rw-concept">Cell Structure</div>
+      <div class="rw-app">CAR-T cell therapy engineers T-lymphocytes to recognise cancer cell surface receptors.</div>
+      <div class="rw-career">Immunology · Biotech</div>
+    </div>
+    <div class="rw-card">
+      <div class="rw-concept">ATP & Respiration</div>
+      <div class="rw-app">Sports science: optimising aerobic vs. anaerobic pathways for elite athletic performance.</div>
+      <div class="rw-career">Exercise Physiology · Nutrition</div>
+    </div>
+  </div>
+
+  <div class="card card-accent" style="margin-bottom:1.5rem;">
+    <div class="card-title">Cross-Subject Connections You Must Make</div>
+    <div class="connect-grid">
+      <div class="connect-chip">Biology <span>↔</span> Chemistry: enzyme active sites = molecular geometry + bond angles</div>
+      <div class="connect-chip">Biology <span>↔</span> Physics: osmosis = water potential gradients = pressure differentials</div>
+      <div class="connect-chip">Biology <span>↔</span> Maths: Hardy-Weinberg equations, population growth curves, statistical significance</div>
+      <div class="connect-chip">Biology <span>↔</span> Medicine: every system has a disease from its failure — learn them in pairs</div>
+      <div class="connect-chip">Biology <span>↔</span> Ecology: energy transfer, food chains, carbon cycle = respiration + photosynthesis</div>
+    </div>
+  </div>
+
+  <div class="card card-accent2">
+    <div class="card-title purple">Your Mastery Checklist</div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Overall mastery progress</span><span id="progress-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem;">Check each item as you achieve it.</div>
+    <div id="mastery-checks">
+      <label class="mastery-list" style="display:flex;flex-direction:column;gap:0;">
+        <li style="cursor:pointer;"><input type="checkbox" class="mc" onchange="updateProgress()" style="margin-right:10px;accent-color:var(--accent);"> Read an unseen scenario and immediately identify the biological principle</li>
+        <li style="cursor:pointer;"><input type="checkbox" class="mc" onchange="updateProgress()" style="margin-right:10px;accent-color:var(--accent);"> Explain the mechanism, not just the fact, under 2-minute time pressure</li>
+        <li style="cursor:pointer;"><input type="checkbox" class="mc" onchange="updateProgress()" style="margin-right:10px;accent-color:var(--accent);"> Completed all 6 Tier 1, 2 & 3 exam questions with full written answers</li>
+        <li style="cursor:pointer;"><input type="checkbox" class="mc" onchange="updateProgress()" style="margin-right:10px;accent-color:var(--accent);"> Can write all 6 core pillars from memory in under 90 seconds</li>
+        <li style="cursor:pointer;"><input type="checkbox" class="mc" onchange="updateProgress()" style="margin-right:10px;accent-color:var(--accent);"> Linked biology concepts to Chemistry, Physics, and Maths</li>
+        <li style="cursor:pointer;"><input type="checkbox" class="mc" onchange="updateProgress()" style="margin-right:10px;accent-color:var(--accent);"> Reviewed all 5 flashcards without peeking and got them all right</li>
+        <li style="cursor:pointer;"><input type="checkbox" class="mc" onchange="updateProgress()" style="margin-right:10px;accent-color:var(--accent);"> Set up spaced repetition schedule in my study planner</li>
+        <li style="cursor:pointer;"><input type="checkbox" class="mc" onchange="updateProgress()" style="margin-right:10px;accent-color:var(--accent);"> Completed a full past paper question under exam conditions</li>
+      </label>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1rem;border-color:var(--accent);background:var(--glow);">
+    <div style="font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem;">You're Done With Session 1</div>
+    <div style="font-size:0.9rem;line-height:1.7;color:var(--text);">Come back in 24 hours for your Day 1 review. The goal was never to study harder — it was to think like an examiner while studying like a scientist. You did that today.</div>
+  </div>
+</section>
+
+<script>
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabs = document.querySelectorAll('.nav-tab');
+  const map = {home:0,phase1:1,phase2:2,phase3:3,phase4:4,phase5:5};
+  if(map[id] !== undefined) tabs[map[id]].classList.add('active');
+  window.scrollTo(0,0);
+}
+
+let timerInterval = null;
+let totalSeconds = 45*60;
+let remaining = totalSeconds;
+let running = false;
+
+function toggleTimer() {
+  if(running) {
+    clearInterval(timerInterval);
+    running = false;
+    document.getElementById('start-btn').textContent = 'Resume';
+  } else {
+    running = true;
+    document.getElementById('start-btn').textContent = 'Pause';
+    timerInterval = setInterval(() => {
+      if(remaining <= 0) {
+        clearInterval(timerInterval);
+        running = false;
+        document.getElementById('start-btn').textContent = 'Done!';
+        document.getElementById('timer-phase-label').textContent = 'Complete';
+        return;
+      }
+      remaining--;
+      updateTimerDisplay();
+    }, 1000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  running = false;
+  remaining = totalSeconds;
+  document.getElementById('start-btn').textContent = 'Start Timer';
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(remaining/60);
+  const s = remaining%60;
+  const display = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('timer-display').textContent = display;
+  document.getElementById('nav-clock').textContent = display;
+
+  const pct = remaining/totalSeconds;
+  const circumference = 440;
+  const offset = circumference*(1-pct);
+  document.getElementById('timer-ring').style.strokeDashoffset = offset;
+
+  const elapsed = totalSeconds - remaining;
+  const blocks = [{end:300,label:'Prime'},{end:1200,label:'Concept Core'},{end:2100,label:'Stress Test'},{end:2580,label:'Encode'},{end:2700,label:'Reflect'}];
+  for(let i=0;i<blocks.length;i++){
+    const el = document.getElementById('block-'+i);
+    el.classList.remove('active','done');
+    if(elapsed >= (i>0?blocks[i-1].end:0) && elapsed < blocks[i].end) {
+      el.classList.add('active');
+      document.getElementById('timer-phase-label').textContent = blocks[i].label;
+    } else if(elapsed >= blocks[i].end) {
+      el.classList.add('done');
+    }
+  }
+}
+
+function startSession() {
+  showSection('phase2');
+  resetTimer();
+}
+
+function toggleHint(id) {
+  const el = document.getElementById(id);
+  const btn = el.previousElementSibling;
+  el.classList.toggle('show');
+  btn.textContent = el.classList.contains('show') ? 'Hide Hint' : 'Show Hint';
+}
+
+function updateProgress() {
+  const checks = document.querySelectorAll('.mc');
+  const checked = document.querySelectorAll('.mc:checked').length;
+  const pct = Math.round((checked/checks.length)*100);
+  document.getElementById('progress-pct').textContent = pct+'%';
+  document.getElementById('progress-fill').style.width = pct+'%';
+}
+
+updateTimerDisplay();
+</script>
+</body>
+</html>
