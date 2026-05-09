@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Shopping List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --card: #14141e;
+            --text: #f0f0f8;
+            --muted: #8888aa;
+            --accent: #00e5a0;
+            --accent2: #7c6aff;
+            --border: rgba(255,255,255,0.07);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        input {
+            flex: 1;
+            background: #1a1a24;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            padding: 12px;
+            font-family: inherit;
+        }
+
+        button {
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .remove-btn {
+            background: transparent;
+            color: #ff6b6b;
+            padding: 4px 8px;
+            font-size: 0.8rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--accent);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .modal-body {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-secondary {
+            background: var(--accent2);
+            color: white;
+        }
+
+        .simulation-controls {
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px dashed var(--muted);
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>SmartShop</h1>
+    <p style="color: var(--muted);">Proximity-aware shopping list</p>
+</header>
+
+<div class="container">
+    <div class="card">
+        <div class="input-group">
+            <input type="text" id="itemInput" placeholder="Add item (e.g. speaker wire)">
+            <button onclick="addItem()">Add</button>
+        </div>
+        <div id="shoppingList"></div>
+    </div>
+
+    <div class="simulation-controls card">
+        <h3 style="margin-top: 0; font-size: 0.9rem; text-transform: uppercase; color: var(--accent2);">Simulation Controls</h3>
+        <p style="font-size: 0.8rem; color: var(--muted);">Simulate your current location to trigger alerts.</p>
+        <div class="input-group">
+            <button onclick="simulateLocation('home')">Home</button>
+            <button onclick="simulateLocation('near_radioshack')">Near Radio Shack</button>
+            <button onclick="simulateLocation('near_homedepot')">Near Home Depot</button>
+        </div>
+        <p id="currentPos" style="font-size: 0.8rem; margin: 0; font-family: monospace;"></p>
+    </div>
+</div>
+
+<div class="modal-overlay" id="alertModal">
+    <div class="modal">
+        <div class="modal-title" id="modalTitle">Proximity Alert!</div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-actions">
+            <button onclick="closeModal()">Navigate Now</button>
+            <button class="btn-secondary" onclick="closeModal()">Add as Waypoint</button>
+            <button style="background: transparent; color: var(--muted);" onclick="closeModal()">Ignore</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let list = JSON.parse(localStorage.getItem('shoppingList')) || [];
+
+    function saveList() {
+        localStorage.setItem('shoppingList', JSON.stringify(list));
+    }
+
+    function renderList() {
+        const container = document.getElementById('shoppingList');
+        container.innerHTML = '';
+        list.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'list-item';
+            div.innerHTML = `
+                <span>${item}</span>
+                <button class="remove-btn" onclick="removeItem(${index})">Remove</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function addItem() {
+        const input = document.getElementById('itemInput');
+        const value = input.value.trim();
+        if (value) {
+            list.push(value);
+            input.value = '';
+            saveList();
+            renderList();
+        }
+    }
+
+    function removeItem(index) {
+        list.splice(index, 1);
+        saveList();
+        renderList();
+    }
+
+    // Initial render
+    renderList();
+
+    // MOCK DATA
+    const stores = [
+        { name: "Radio Shack", lat: 34.0522, lon: -118.2437, categories: ["speaker wire", "electronics", "batteries"] },
+        { name: "Home Depot", lat: 34.0407, lon: -118.2688, categories: ["tools", "paint", "light bulbs", "speaker wire"] },
+        { name: "Best Buy", lat: 34.0300, lon: -118.2850, categories: ["laptops", "tv", "games"] }
+    ];
+
+    const locations = {
+        home: { lat: 34.1000, lon: -118.3000 },
+        near_radioshack: { lat: 34.0530, lon: -118.2440 }, // Very close to Radio Shack
+        near_homedepot: { lat: 34.0410, lon: -118.2690 }  // Very close to Home Depot
+    };
+
+    let currentLocation = locations.home;
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 3958.8; // Radius of Earth in miles
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                  Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    function simulateLocation(key) {
+        currentLocation = locations[key];
+        document.getElementById('currentPos').innerText = `Lat: ${currentLocation.lat.toFixed(4)}, Lon: ${currentLocation.lon.toFixed(4)} (${key})`;
+        checkProximity();
+    }
+
+    function checkProximity() {
+        if (list.length === 0) return;
+
+        for (const store of stores) {
+            const dist = calculateDistance(currentLocation.lat, currentLocation.lon, store.lat, store.lon);
+
+            if (dist <= 1.0) { // Within 1 mile
+                // Check if any list item matches store categories
+                const match = list.find(item =>
+                    store.categories.some(cat => item.toLowerCase().includes(cat.toLowerCase()))
+                );
+
+                if (match) {
+                    showModal(store.name, match, dist);
+                    break;
+                }
+            }
+        }
+    }
+
+    function showModal(storeName, itemName, distance) {
+        const overlay = document.getElementById('alertModal');
+        const body = document.getElementById('modalBody');
+
+        body.innerHTML = `You are within <strong>${distance.toFixed(1)} miles</strong> of <strong>${storeName}</strong> and <strong>"${itemName}"</strong> is on your list. Would you like to navigate there or add it as a waypoint?`;
+
+        overlay.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('alertModal').style.display = 'none';
+    }
+
+    simulateLocation('home');
+</script>
+
+</body>
+</html>
